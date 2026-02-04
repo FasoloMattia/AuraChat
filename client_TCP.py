@@ -1,5 +1,4 @@
 import socket
-from logger import log_message, generate_html_log
 
 class Colori:
     RESET = "\033[0m"
@@ -81,19 +80,14 @@ try:
         mess = input(f"{Colori.BLU}[CLIENT]{Colori.RESET} --> Inserisci un messaggio da inviare: ")
         CLIENT.send(mess.encode())
         
-        log_message(mittente="CLIENT", ip=SERVER_IP, contenuto=mess)
-        generate_html_log()
-        
         data = CLIENT.recv(1024).decode()
 
         if data == "-1":
-            print(f"{Colori.VERDE}[SERVER]{Colori.RESET} --> Disconnessione richiesta dal server")
+            print(f"{Colori.GIALLO}[SERVER]{Colori.RESET} --> Disconnessione richiesta dal server")
             CLIENT.close()
             break
 
         print(f"{Colori.VERDE}[SERVER]{Colori.RESET} --> {data}")
-        log_message(mittente="SERVER", ip=SERVER_IP, contenuto=data)
-        generate_html_log()
 
 except ConnectionRefusedError:
     print(f"{Colori.ROSSO}[ERRORE]{Colori.RESET} Impossibile connettersi a {SERVER_IP}:{SERVER_PORT}")

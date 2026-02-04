@@ -48,7 +48,7 @@ def gestisci_client(client_socket, client_address):
                 break
                 
             print(f"{Colori.CELESTE}[{client_address}]{Colori.RESET} Messaggio ricevuto: {data}")
-            log_message(mittente="CLIENT", ip=client_address[0], contenuto=data)
+            log_message(mittente="CLIENT", ip=f'{client_address[0]}:{client_address[1]}', contenuto=data)
             generate_html_log()
             
             if data.upper() == "EXIT":
