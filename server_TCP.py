@@ -39,11 +39,20 @@ def broadcast_server_presence(server_ip, tcp_port):
 def gestisci_client(client_socket, client_address):
     """Funzione che gestisce la comunicazione con UN SINGOLO client"""
     print(f"{Colori.VERDE}[THREAD] Nuovo client connesso: {client_address}{Colori.RESET}")
+
+    global client_counter
+    with lock_counter:
+        client_counter += 1
     
     try:
         while True:
             data = client_socket.recv(1024).decode()
+            parti = data.strip().split()
+
+            comando = parti[0]
+            parametro = parti[1] if len(parti) == 2 else None
             
+
             if not data:
                 break
                 
@@ -51,26 +60,51 @@ def gestisci_client(client_socket, client_address):
             log_message(mittente="CLIENT", ip=f'{client_address[0]}:{client_address[1]}', contenuto=data)
             generate_html_log()
             
-            if data.upper() == "EXIT":
+            if comando.upper() == "EXIT":
                 risposta = "-1"
                 client_socket.send(risposta.encode())
                 log_message(mittente="SERVER", ip=client_address[0], contenuto=risposta)
                 generate_html_log()
                 break
                 
-            elif data.upper() == "TIME":
+            elif comando.upper() == "TIME":
                 time = datetime.datetime.now()
                 risposta = f"{time.hour}:{time.minute}:{time.second}"
                 client_socket.send(risposta.encode())
                 log_message(mittente="SERVER", ip=client_address[0], contenuto=risposta)
                 generate_html_log()
 
-            elif data.upper() == "NAME":
+            elif comando.upper() == "NAME":
                 risposta = f"Sono il server: {socket.gethostname()}"
                 client_socket.send(risposta.encode())
                 log_message(mittente="SERVER", ip=client_address[0], contenuto=risposta)
                 generate_html_log()
 
+            elif comando.upper() == "INFO":
+                risposta = []
+
+                if (parametro == "1" or parametro == None):
+                    risposta.append(f"Client connessi: {client_counter}")
+                
+                if (parametro == "2" or parametro == None): # TODO: DA IMPLEMENTARE PRIMA LE CHAT
+                    risposta.append("TODO: SIMULATO")
+                
+                if (parametro == "3" or parametro == None):
+                    risposta.append(f"IP: {local_ip} | Porta: 12345")
+                
+                if (parametro == "4" or parametro == None):
+                    risposta.append(f"IP/Porta del tuo client: {client_address[0]}:{client_address[1]}")
+                
+                if (parametro == "5" or parametro == None): # TODO: DA IMPLEMENTARE PRIMA LE CHAT
+                    risposta.append("TODO: SIMULATO")
+
+                risposta = "\n".join(risposta)
+                client_socket.send(risposta.encode())
+                log_message(mittente="SERVER", ip=client_address[0], contenuto=risposta)
+                generate_html_log()
+                
+                
+                
             else: 
                 risposta = f"Ciao {client_address[0]}, ho ricevuto: '{data}'"
                 client_socket.send(risposta.encode())
@@ -116,6 +150,8 @@ SERVER.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 SERVER.bind((local_ip, 12345))
 SERVER.listen(5)
 
+client_counter = 0
+lock_counter = threading.Lock()
 print(f"{Colori.VERDE}Server TCP in ascolto sulla porta 12345...{Colori.RESET}")
 print(f" {Colori.CELESTE}In attesa di client...{Colori.RESET}\n")
 
