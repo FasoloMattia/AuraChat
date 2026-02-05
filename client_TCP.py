@@ -1,4 +1,5 @@
 import socket
+import os
 
 class Colori:
     RESET = "\033[0m"
@@ -8,6 +9,8 @@ class Colori:
     BLU = "\033[94m"
     ROSA = "\033[95m"
     CELESTE = "\033[96m"
+
+os.system("") # Abilita i colori
 
 def discover_server(timeout=10):
     """Cerca il server sulla rete locale tramite broadcast UDP"""

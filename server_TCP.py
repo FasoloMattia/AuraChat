@@ -2,6 +2,7 @@ import socket
 import datetime
 import threading
 from logger import log_message, generate_html_log
+import os
 
 class Colori:
     RESET = "\033[0m"
@@ -11,7 +12,8 @@ class Colori:
     BLU = "\033[94m"
     ROSA = "\033[95m"
     CELESTE = "\033[96m"
-    
+
+os.system("") # Abilita i colori
 
 def broadcast_server_presence(server_ip, tcp_port):
     """Trasmette in broadcast l'IP del server sulla rete locale"""
